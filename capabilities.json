@@ -1,0 +1,178 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Fields",
+            "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measure",
+            "name": "measure",
+            "kind": "Measure"
+        }
+    ],
+    "objects": {
+        "general": {
+            "displayName": "General",
+            "displayNameKey": "formattingGeneral",
+            "properties": {
+                "filter": {
+                    "type": {
+                       "filter": {
+                          "filter": true
+                       }
+                    }
+                 }
+            }
+        },
+        "topnslicer": {
+            "displayName": "TopNSlicer",
+            "properties": {
+                "slicerItems":{
+                    "displayName": "Items",
+                    "description": "Items that has been selected",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "selectAllSelected":{
+                    "displayName": "Select all selected",
+                    "description": "Items that has been selected",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "tableName":{
+                    "displayName": "Table name",
+                    "description": "Table name of the category column",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "columnName":{
+                    "displayName": "Column name",
+                    "description": "Column name of the category column",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "excludeItemsBySearch":{
+                    "displayName": "Exclude items by search",
+                    "description": "Values that has been filtered by the search function",
+                    "type": {
+                        "text": true
+                    }
+                },
+                "searchString":{
+                    "displayName": "Search string",
+                    "description": "Current search text",
+                    "type": {
+                        "text": true
+                    }
+                }
+            }
+        },
+        "selectionControls": {
+            "displayName": "Selection controls",
+            "properties": {
+                "singleSelect":{
+                    "displayName": "Single select",
+                    "description": "Allow only one item being selected at a time.",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "selectAll":{
+                    "displayName": "Show \"Select All\" option",
+                    "description": "Show \"Select All\" as an option in the slicer. This selects all the values in the slicer so you can unselect them one by one to create an \"is not \" type filter.",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "searchBar":{
+                    "displayName": "Show search bar",
+                    "description": "Show search bar at the top of the slicer.",
+                    "type": {
+                        "bool": true
+                    }
+                },
+                "positiveColor": {
+                    "displayName": "Positive color",
+                    "description": "The color of the positive bar",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "negativeColor": {
+                    "displayName": "Negative color",
+                    "description": "The color of the negative bar",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontSize": {
+                    "displayName": "Text Size",
+                    "description": "Value font size",
+                    "type": {
+                        "formatting": {
+                            "fontSize": true
+                        }
+                    }
+                },
+                "fontFamily": {
+                    "displayName": "Font Family",
+                    "type": {
+                        "formatting": {
+                            "fontFamily": true
+                        }
+                    }
+                },
+                "maxTextColumnWidth": {
+                    "displayName": "Max text column width",
+                    "description": "The maximum width in pixels of the text column",
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
+     },
+    "dataViewMappings": [
+        {
+            "conditions": [
+                {
+                    "category": {
+                        "max": 1
+                    },
+                    "measure": {
+                        "max": 1
+                    }
+                }
+            ],
+            "categorical": {
+                "categories": {
+                    "for": {
+                        "in": "category"
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "bind": {
+                                "to": "measure"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

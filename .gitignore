@@ -1,0 +1,31 @@
+# Installed Modules
+node_modules/
+
+# Temp Files
+.DS_Store
+.scripts
+dump
+.tmp
+
+# Error Logs
+*debug.log
+*error.log
+
+# IDE / Editors
+*~
+
+# Build Artifacts
+build/
+dist/
+docs/
+*.js
+!/packages/*/*.js
+!/*.js
+!/packages/*/src/lib/*.js
+/packages/*/src/lib/*.spec.js
+!/packages/*/bin/*.js
+*.d.ts
+build.out
+packages/barChart/lib
+
+webpack.statistics.*.html

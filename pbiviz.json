@@ -1,0 +1,24 @@
+{
+    "visual": {
+        "name": "BarSlicer",
+        "displayName": "Bar Slicer",
+        "guid": "BarSlicerCB0921030E86481B870C899943602EBF",
+        "visualClassName": "Visual",
+        "version": "1.0.0",
+        "description": "Vertical bar chart and slicer in one.",
+        "supportUrl": "https://www.lytiqa.se/",
+        "gitHubUrl": ""
+    },
+    "apiVersion": "3.8.0",
+    "author": {
+        "name": "John Hagelin",
+        "email": "john@lytiqa.se"
+    },
+    "assets": {
+        "icon": "assets/icon.png"
+    },
+    "style": "style/visual.less",
+    "capabilities": "capabilities.json",
+    "dependencies": null,
+    "stringResources": []
+}

@@ -1,6 +1,8 @@
-# Bar Chart
+# Bar Slicer
 
-Bar Chart is a Power BI Custom Visual that combines a bar chart with a slicer.
+Bar Slicer is a Power BI Custom Visual that combines a bar chart with a slicer.
+
+![Bar Slicer](/assets/screenshot.png?raw=true)
 
 ## Usage
 * Install [node.js 6+](https://nodejs.org)
