@@ -61,7 +61,7 @@ export class Visual implements IVisual {
 
     public update(options: VisualUpdateOptions) {
         this.settings = Visual.parseSettings(options && options.dataViews && options.dataViews[0]);
-        this.currentFilterValues = JSON.parse(this.settings.topnslicer.slicerItems);
+        this.currentFilterValues = JSON.parse(this.settings.barslicer.slicerItems);
         this.d3visual.selectAll('.data-table').remove();
         this.d3visual.select('#erasorIcon').remove();
         if(this.settings.selectionControls.singleSelect){
@@ -156,7 +156,7 @@ export class Visual implements IVisual {
                 .attr('class', 'searchbox')
                 .attr('type', 'text')
                 .attr('placeholder', 'Search')
-                .attr('value', this.settings.topnslicer.searchString)
+                .attr('value', this.settings.barslicer.searchString)
                 .style('font-size',this.settings.selectionControls.fontSize+"px")
                 .style('font-family',this.settings.selectionControls.fontFamily);  
 
@@ -186,7 +186,7 @@ export class Visual implements IVisual {
             .style("height", Number(this.settings.selectionControls.fontSize)-1+"px")
             .style("width", Number(this.settings.selectionControls.fontSize)-1+"px");
 
-            if (this.settings.topnslicer.selectAllSelected) {
+            if (this.settings.barslicer.selectAllSelected) {
                 span.node().classList.add("checked");
             }
 
@@ -208,7 +208,7 @@ export class Visual implements IVisual {
             .attr("tableName", function (d) { return d[3] })
             .attr("name", "slicerRow")
             .style("display", function (d) {
-                                        if( JSON.parse(self.settings.topnslicer.excludeItemsBySearch.toLowerCase()).includes(d[0].toLowerCase())){
+                                        if( JSON.parse(self.settings.barslicer.excludeItemsBySearch.toLowerCase()).includes(d[0].toLowerCase())){
                                             return "none"
                                         }
                                         else{
@@ -263,7 +263,7 @@ export class Visual implements IVisual {
         for (var i = 0; i < slicerRows.length; i++) {
             const tr = slicerRows[i] as HTMLTableRowElement
 
-            if (this.settings.topnslicer.slicerItems.indexOf(tr.getAttribute("value")) > -1) {
+            if (this.settings.barslicer.slicerItems.indexOf(tr.getAttribute("value")) > -1) {
                 tr.getElementsByClassName('checkmark')[0].className += " checked"
             }
             tr.addEventListener("click", this.onCheckboxChange.bind(this, tr))
@@ -326,7 +326,7 @@ export class Visual implements IVisual {
         this.persistSearchString(input);
         var excludeItems = []
         var datarows = document.getElementsByClassName('datarow') as HTMLCollectionOf<HTMLElement>;
-        this.settings.topnslicer.searchString = input;
+        this.settings.barslicer.searchString = input;
         
         for (var i = 0; i < datarows.length; i++) {
             if(!datarows[i].getAttribute('value').toLowerCase().includes(input.toLowerCase())){
@@ -351,8 +351,8 @@ export class Visual implements IVisual {
         const basicFilter: models.IBasicFilter = {
             $schema: "http://powerbi.com/product/schema#basic",
             target: {
-                table: this.settings.topnslicer.tableName,
-                column: this.settings.topnslicer.columnName
+                table: this.settings.barslicer.tableName,
+                column: this.settings.barslicer.columnName
             },
             operator: "In",
             //important that columns are in correct data type
@@ -391,7 +391,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "tableName": tableName
@@ -405,7 +405,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "columnName": columnName
@@ -419,7 +419,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "slicerItems": JSON.stringify(this.currentFilterValues)
@@ -433,7 +433,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "excludeItemsBySearch": excludeItemsBySearch
@@ -447,7 +447,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "searchString": searchString
@@ -461,7 +461,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "selectAllSelected": selected
@@ -503,7 +503,7 @@ export class Visual implements IVisual {
         let objects: powerbi.VisualObjectInstancesToPersist = {
             merge: [
                 <VisualObjectInstance>{
-                    objectName: "topnslicer",
+                    objectName: "barslicer",
                     selector: undefined,
                     properties: {
                         "searchBarAlreadyCreated": selected
@@ -523,7 +523,7 @@ export class Visual implements IVisual {
      *
      */
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
-        if (options.objectName === "topnslicer") { return; }
+        if (options.objectName === "barslicer") { return; }
         else {
             return VisualSettings.enumerateObjectInstances(this.settings || VisualSettings.getDefault(), options);
         }
