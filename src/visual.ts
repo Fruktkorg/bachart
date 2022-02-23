@@ -40,10 +40,8 @@ import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 
 import { VisualSettings } from "./settings";
-import { max } from "d3";
 
 export class Visual implements IVisual {
-    private target: HTMLElement;
     private settings: VisualSettings;
     private host: IVisualHost;
     private d3visual: any;
@@ -51,7 +49,6 @@ export class Visual implements IVisual {
     private filterValuesWithDataTypes: Array<any>;
 
     constructor(options: VisualConstructorOptions) {
-        this.target = options.element;
         this.host = options.host;
         this.d3visual = d3.select(options.element);
         this.d3visual.append('body');
@@ -77,6 +74,7 @@ export class Visual implements IVisual {
         this.persistTableName(data[0][3])
         this.persistColumnName(data[0][2])
         this.appendVisual(data);
+        this.applySearchboxStyle();
     }
 
     public getDataset(dataView: DataView): any {
@@ -126,14 +124,12 @@ export class Visual implements IVisual {
         var maxValue = d3.max(data, function (d) { return Number(d[1]); })
         var minValue = d3.min(data, function (d) { return Number(d[1]); })
 
-        // Sort the data in descending order
-        //data.sort(function (a, b) { return d3.descending(a[1], b[1]) });
-
         // Setup the scale for the values for display, use abs max as max value
         var x = d3.scaleLinear()
             .domain([0, d3.max(data, function (d) { return Math.abs(d[1]); })])
             .range([0, 100]);
 
+        // Erasor
         this.d3visual
             .selectAll('.searchbar-container')
             .append('a')
@@ -141,7 +137,6 @@ export class Visual implements IVisual {
             .attr('id', 'erasorIcon') as HTMLAnchorElement
 
         const erasor = document.getElementById('erasorIcon') as HTMLAnchorElement;
-
         erasor.addEventListener("click", this.onErasorClick.bind(this));
 
         // Search bar
@@ -151,6 +146,8 @@ export class Visual implements IVisual {
                 .append('a')
                 .attr('class', 'search-icon')
                 .attr('id', 'searchIcon')
+                .style('font-size',this.settings.selectionControls.fontSize+"px")
+                .style('font-family',this.settings.selectionControls.fontFamily);  
 
             this.d3visual
                 .selectAll('.searchbar-container')
@@ -160,6 +157,8 @@ export class Visual implements IVisual {
                 .attr('type', 'text')
                 .attr('placeholder', 'Search')
                 .attr('value', this.settings.topnslicer.searchString)
+                .style('font-size',this.settings.selectionControls.fontSize+"px")
+                .style('font-family',this.settings.selectionControls.fontFamily);  
 
             // Get the input box
             const input = document.getElementById('searchInput') as HTMLInputElement;
@@ -270,6 +269,22 @@ export class Visual implements IVisual {
             tr.addEventListener("click", this.onCheckboxChange.bind(this, tr))
         }
         return table;
+    }
+
+    public applySearchboxStyle() {
+        if(this.settings.selectionControls.searchBar) {
+            this.d3visual
+            .selectAll('#searchIcon')
+            .style('font-size',this.settings.selectionControls.fontSize+"px");
+
+            this.d3visual
+            .selectAll('#searchInput')
+            .style('font-size',this.settings.selectionControls.fontSize+"px")
+            .style('font-family',this.settings.selectionControls.fontFamily);
+        }
+        this.d3visual
+        .selectAll('#erasorIcon')
+        .style('font-size',this.settings.selectionControls.fontSize+"px");
     }
 
     public onCheckboxChange(tr: HTMLTableRowElement) {
