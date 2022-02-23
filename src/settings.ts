@@ -42,10 +42,13 @@ export class SelectionControlsSettings {
   public singleSelect: Boolean = false;
   public selectAll: Boolean = false;
   public searchBar: Boolean = false;
-  public positiveColor: string = "green";
-  public negativeColor: string = "red";
+  public checkboxBorderColor: string = "#cccccc";
+  public checkboxFillColor: string = "#000000";
+  public positiveColor: string = "#3AA935";
+  public negativeColor: string = "#BC0909";
+  public fontColor: string = "#000000";
   public fontSize: Number = 12;
-  public fontFamily: string = "DIN";
+  public fontFamily: string = "Arial";
   public maxTextColumnWidth: number = 200;
 }
 

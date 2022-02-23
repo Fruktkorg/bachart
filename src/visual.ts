@@ -55,8 +55,6 @@ export class Visual implements IVisual {
         this.d3visual.selectAll('body').append('div').attr('class','searchbar-container')
         this.d3visual.selectAll('body').append('div').attr('class','scroll-container')
         this.currentFilterValues = new Array();
-        
-        
     }
 
     public update(options: VisualUpdateOptions) {
@@ -147,7 +145,8 @@ export class Visual implements IVisual {
                 .attr('class', 'search-icon')
                 .attr('id', 'searchIcon')
                 .style('font-size',this.settings.selectionControls.fontSize+"px")
-                .style('font-family',this.settings.selectionControls.fontFamily);  
+                .style('font-family',this.settings.selectionControls.fontFamily)
+                .style('color', this.settings.selectionControls.fontColor);
 
             this.d3visual
                 .selectAll('.searchbar-container')
@@ -158,7 +157,8 @@ export class Visual implements IVisual {
                 .attr('placeholder', 'Search')
                 .attr('value', this.settings.barslicer.searchString)
                 .style('font-size',this.settings.selectionControls.fontSize+"px")
-                .style('font-family',this.settings.selectionControls.fontFamily);  
+                .style('font-family',this.settings.selectionControls.fontFamily)  
+                .style('color', this.settings.selectionControls.fontColor);
 
             // Get the input box
             const input = document.getElementById('searchInput') as HTMLInputElement;
@@ -177,20 +177,29 @@ export class Visual implements IVisual {
         }
 
         // Table 
-        var table = this.d3visual.selectAll('.scroll-container').append('table').attr('class','data-table').style('font-size',this.settings.selectionControls.fontSize+"px").style('font-family',this.settings.selectionControls.fontFamily);        
+        var table = this.d3visual.selectAll('.scroll-container')
+                    .append('table').attr('class','data-table')
+                    .style('font-size',this.settings.selectionControls.fontSize+"px")
+                    .style('font-family',this.settings.selectionControls.fontFamily);        
 
         // Select all row
         if (this.settings.selectionControls.selectAll) {
             var selectAllRow = table.append('tr').attr("class", "selectAllRow").attr("id", "selectAllRow");
             var span = selectAllRow.append('td').attr('class', 'checkbox').append('span').attr('class', 'checkmark')
             .style("height", Number(this.settings.selectionControls.fontSize)-1+"px")
-            .style("width", Number(this.settings.selectionControls.fontSize)-1+"px");
+            .style("width", Number(this.settings.selectionControls.fontSize)-1+"px")
+            .style("border-color", this.settings.selectionControls.checkboxBorderColor);
 
             if (this.settings.barslicer.selectAllSelected) {
                 span.node().classList.add("checked");
+                span.style("background-color", this.settings.selectionControls.checkboxFillColor)
+                span.style("border-color", this.settings.selectionControls.checkboxFillColor);
             }
 
-            selectAllRow.append('td').attr('class', 'data name').text("Select all");
+            selectAllRow.append('td')
+            .attr('class', 'data name')
+            .text("Select all")
+            .style('color', this.settings.selectionControls.fontColor);
 
             const trselectAllRow = document.getElementById("selectAllRow") as HTMLTableRowElement;
             trselectAllRow.addEventListener("click", this.onCheckboxChange.bind(this, trselectAllRow));
@@ -221,7 +230,8 @@ export class Visual implements IVisual {
         // Create the name column
         tr.append("td").attr("class", "data name")
             .style("max-width", this.settings.selectionControls.maxTextColumnWidth.toString()+"px")
-            .text(function (d) { return d[0] });
+            .text(function (d) { return d[0] })
+            .style('color', this.settings.selectionControls.fontColor);
             
         // Create the value column
         //  tr.append("td").attr("class", "data value")
@@ -249,14 +259,17 @@ export class Visual implements IVisual {
             .style("width", function (d) { return d[1] > 0 ? x(d[1]) + "%" : "0%"; });
 
         // Checkboxes
-        checkbox.append("span").attr("class", "checkmark").attr("id", function (d) { return d[0] })
+        checkbox.append("span")
+            .attr("class", "checkmark")
+            .attr("id", function (d) { return d[0] })
             .attr("value", function (d) { return d[0] })
             .attr("columnName", function (d) { return d[2] })
             .attr("tableName", function (d) { return d[3] })
             .attr("name", "slicerButton")
             .attr("type", "checkbox")
             .style("height", Number(this.settings.selectionControls.fontSize)-1+"px")
-            .style("width", Number(this.settings.selectionControls.fontSize)-1+"px");
+            .style("width", Number(this.settings.selectionControls.fontSize)-1+"px")
+            .style('border-color', this.settings.selectionControls.checkboxBorderColor);
 
         var slicerRows = document.getElementsByName("slicerRow")
 
@@ -264,7 +277,10 @@ export class Visual implements IVisual {
             const tr = slicerRows[i] as HTMLTableRowElement
 
             if (this.settings.barslicer.slicerItems.indexOf(tr.getAttribute("value")) > -1) {
-                tr.getElementsByClassName('checkmark')[0].className += " checked"
+                const checkmark = tr.getElementsByClassName('checkmark')[0] as HTMLElement;
+                checkmark.className += " checked"
+                checkmark.style["background-color"] = this.settings.selectionControls.checkboxFillColor;
+                checkmark.style["border-color"] = this.settings.selectionControls.checkboxFillColor;
             }
             tr.addEventListener("click", this.onCheckboxChange.bind(this, tr))
         }

@@ -96,6 +96,28 @@
                         "bool": true
                     }
                 },
+                "checkboxBorderColor": {
+                    "displayName": "Checkbox border color",
+                    "description": "The color of the checkbox border color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "checkboxFillColor": {
+                    "displayName": "Checkbox fill color",
+                    "description": "The color of the checkbox fill color",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
                 "positiveColor": {
                     "displayName": "Positive color",
                     "description": "The color of the positive bar",
@@ -110,6 +132,17 @@
                 "negativeColor": {
                     "displayName": "Negative color",
                     "description": "The color of the negative bar",
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "fontColor": {
+                    "displayName": "Font color",
+                    "description": "The color of the font",
                     "type": {
                         "fill": {
                             "solid": {
