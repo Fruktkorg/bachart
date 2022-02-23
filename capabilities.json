@@ -25,8 +25,8 @@
                  }
             }
         },
-        "topnslicer": {
-            "displayName": "TopNSlicer",
+        "barslicer": {
+            "displayName": "BarSlicer",
             "properties": {
                 "slicerItems":{
                     "displayName": "Items",

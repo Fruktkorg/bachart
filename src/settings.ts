@@ -29,7 +29,7 @@
 import { dataViewObjectsParser } from "powerbi-visuals-utils-dataviewutils";
 import DataViewObjectsParser = dataViewObjectsParser.DataViewObjectsParser;
 
-export class TopNSlicerSettings {
+export class BarSlicerSettings {
   public slicerItems: string = "[]";
   public selectAllSelected: boolean = false;
   public tableName: string = "";
@@ -50,6 +50,6 @@ export class SelectionControlsSettings {
 }
 
 export class VisualSettings extends DataViewObjectsParser {
-  public topnslicer: TopNSlicerSettings = new TopNSlicerSettings();
+  public barslicer: BarSlicerSettings = new BarSlicerSettings();
   public selectionControls: SelectionControlsSettings = new SelectionControlsSettings();
 }
