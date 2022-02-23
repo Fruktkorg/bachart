@@ -178,6 +178,7 @@ export class Visual implements IVisual {
 
         // Table 
         var table = this.d3visual.selectAll('.scroll-container')
+                    .style('height','calc(100vh - 25px)')
                     .append('table').attr('class','data-table')
                     .style('font-size',this.settings.selectionControls.fontSize+"px")
                     .style('font-family',this.settings.selectionControls.fontFamily);        
