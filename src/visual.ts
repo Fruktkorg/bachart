@@ -298,6 +298,10 @@ export class Visual implements IVisual {
             .style('font-size',this.settings.selectionControls.fontSize+"px")
             .style('font-family',this.settings.selectionControls.fontFamily);
         }
+        else{
+            this.d3visual.selectAll('.scroll-container')
+            .style('height', '100vh')
+        }
         this.d3visual
         .selectAll('#erasorIcon')
         .style('font-size',this.settings.selectionControls.fontSize+"px");
