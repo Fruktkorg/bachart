@@ -7,7 +7,7 @@
         "version": "1.0.0",
         "description": "Vertical bar chart and slicer in one.",
         "supportUrl": "https://www.lytiqa.se/",
-        "gitHubUrl": ""
+        "gitHubUrl": "https://github.com/Fruktkorg/bachart"
     },
     "apiVersion": "3.8.0",
     "author": {
