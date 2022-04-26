@@ -38,6 +38,8 @@ import VisualObjectInstanceEnumerationObject = powerbi.VisualObjectInstanceEnume
 import * as d3 from "d3";
 import IVisualHost = powerbi.extensibility.visual.IVisualHost;
 import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
+import { createTooltipServiceWrapper, TooltipEventArgs, ITooltipServiceWrapper, TooltipEnabledDataPoint } from "powerbi-visuals-utils-tooltiputils";
+import VisualTooltipDataItem = powerbi.extensibility.VisualTooltipDataItem;
 
 import { VisualSettings } from "./settings";
 
@@ -47,6 +49,7 @@ export class Visual implements IVisual {
     private d3visual: any;
     private currentFilterValues: Array<any>;
     private filterValuesWithDataTypes: Array<any>;
+    private tooltipServiceWrapper: ITooltipServiceWrapper;
 
     constructor(options: VisualConstructorOptions) {
         this.host = options.host;
@@ -55,6 +58,7 @@ export class Visual implements IVisual {
         this.d3visual.selectAll('body').append('div').attr('class','searchbar-container')
         this.d3visual.selectAll('body').append('div').attr('class','scroll-container')
         this.currentFilterValues = new Array();
+        this.tooltipServiceWrapper = createTooltipServiceWrapper(this.host.tooltipService, options.element);
     }
 
     public update(options: VisualUpdateOptions) {
@@ -79,7 +83,43 @@ export class Visual implements IVisual {
         var categoricalDataView = dataView.categorical;
         var categoricalValues = categoricalDataView.values[0].values;
         var categoricalValuesFormatString = categoricalDataView.values[0].source.format;
+        var categoricalValuesName = categoricalDataView.values[0].source.displayName;
+        // var categoricalValuesTooltip = categoricalDataView.values[1].values;
+        // var categoricalValuesTooltipFormatString = categoricalDataView.values[1].source.format;
+        // var categoricalValuesTooltipName = categoricalDataView.values[1].source.displayName;
         var categoricalNames = categoricalDataView.categories[0].values;
+
+        // var categoricalValuesTooltipList = new Array();
+        // var categoricalValuesTooltipNameList = new Array();
+        // var categoricalValuesTooltipFormatStringList = new Array(); 
+
+        var tooltipData = new Array();
+        var tooltipDataPivot = new Array();
+
+        for(i=1;i<categoricalDataView.values.length;i++)
+        {
+            // categoricalValuesTooltipList.push(categoricalDataView.values[i].values);
+            // categoricalValuesTooltipNameList.push(categoricalDataView.values[i].source.displayName);
+            // categoricalValuesTooltipFormatStringList.push(categoricalDataView.values[i].source.format);
+
+            for (var j = 0; j < categoricalNames.length; j++) {
+                if (categoricalNames[j] != null) {
+                    tooltipData.push([j.toString(), categoricalDataView.values[i].values[j], categoricalDataView.values[i].source.displayName, categoricalDataView.values[i].source.format])
+                }
+            }
+        }
+
+        for (var i = 0; i < categoricalNames.length; i++) {
+            if (categoricalNames[i] != null) {
+                
+                tooltipDataPivot.push( JSON.parse(JSON.stringify(tooltipData)).filter(id => id[0] == i.toString()) )
+            }
+        }
+        
+        var tooltipDataPivotTransposed = tooltipDataPivot[0].map((_, colIndex) => tooltipDataPivot.map(row => row[colIndex]))
+        var tooltipDataConcat = new Array();
+
+        tooltipDataConcat = tooltipDataPivotTransposed[0]
 
         // Only if we have hierarchical structure with virtual table, take table name from identityExprs
         // Power BI creates hierarchy for date type of data (Year, Quater, Month, Days)
@@ -100,7 +140,15 @@ export class Visual implements IVisual {
 
         for (var i = 0; i < categoricalNames.length; i++) {
             if (categoricalNames[i] != null) {
-                data.push([categoricalNames[i], categoricalValues[i], categoricalNamesColummName.toString(), categoricalNamesTableName.toString(), categoricalValuesFormatString])
+                data.push([categoricalNames[i], categoricalValues[i], categoricalNamesColummName.toString(), categoricalNamesTableName.toString(), categoricalValuesFormatString, categoricalValuesName.toString(), i.toString()])
+                
+                //Tooltips
+                for(var j = 0; j<tooltipDataPivotTransposed.length;j++)
+                {
+                    data[i].push(tooltipDataPivotTransposed[j][i][1])
+                    data[i].push(tooltipDataPivotTransposed[j][i][2])
+                    data[i].push(tooltipDataPivotTransposed[j][i][3])
+                }
                 this.filterValuesWithDataTypes.push(categoricalNames[i]);
             }
         }
@@ -212,7 +260,7 @@ export class Visual implements IVisual {
             .enter()
             .append("tr")
             .attr("class", "datarow")
-            .attr("id", function (d) { return d[0] })
+            .attr("id", function (d) { return "datarow"+d[6] })
             .attr("value", function (d) { return d[0] })
             .attr("columnName", function (d) { return d[2] })
             .attr("tableName", function (d) { return d[3] })
@@ -240,7 +288,9 @@ export class Visual implements IVisual {
 
         // Create a column at the beginning of the table for the chart
         var chart = tr.append("td").attr("class", "chart");
-        chart.append("span").attr("class", "tooltip").text(function (d) { return self.formatMeasure(d[1], d[4]) });
+        
+        //old tooltip
+        //chart.append("span").attr("class", "tooltip").text(function (d) { return self.formatMeasure(d[1], d[4]) });
 
         var minValueScaled = x(Math.abs(minValue));
         var maxValueScaled = maxValue < 0 ? 0 : x(Math.abs(maxValue));
@@ -258,6 +308,37 @@ export class Visual implements IVisual {
         tr.select("div.positive")
             .style("background-color", this.settings.selectionControls.positiveColor)
             .style("width", function (d) { return d[1] > 0 ? x(d[1]) + "%" : "0%"; });
+        
+        //Tooltip
+        for(var i = 0; i<data.length; i++) {
+
+            let tooltip: VisualTooltipDataItem[] = [
+            {
+                displayName: data[i][2],
+                value: data[i][0]
+            },
+            {
+                displayName: data[i][5],
+                value: self.formatMeasure(data[i][1], data[i][4])
+            }
+            ];
+
+
+            for(var j = 7; j<data[0].length; j+=3) 
+            {
+                
+                tooltip.push({
+                        displayName: data[i][j+1], 
+                        value: self.formatMeasure(data[i][j],data[i][j+2])
+                })
+            }
+
+            this.tooltipServiceWrapper.addTooltip(
+                this.d3visual.select("#datarow"+data[i][6]),
+                (datapoint: any) => tooltip,
+                (datapoint: any) => 1 //optional?
+            );
+        }
 
         // Checkboxes
         checkbox.append("span")
@@ -534,15 +615,18 @@ export class Visual implements IVisual {
         this.host.persistProperties(objects);
     }
 
+    // public renderTooltip(selection: Selection<Line | Task | MilestonePath>): void {
+    //     this.tooltipServiceWrapper.addTooltip(
+    //         selection,
+    //         (tooltipEvent: TooltipEventArgs<TooltipEnabledDataPoint>) => {
+    //             return tooltipEvent.data.tooltipInfo;
+    //         });
+    // }
+
     private static parseSettings(dataView: DataView): VisualSettings {
         return <VisualSettings>VisualSettings.parse(dataView);
     }
 
-    /**
-     * This function gets called for each of the objects defined in the capabilities files and allows you to select which of the
-     * objects and properties you want to expose to the users in the property pane.
-     *
-     */
     public enumerateObjectInstances(options: EnumerateVisualObjectInstancesOptions): VisualObjectInstance[] | VisualObjectInstanceEnumerationObject {
         if (options.objectName === "barslicer") { return; }
         else {

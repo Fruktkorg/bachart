@@ -9,6 +9,11 @@
             "displayName": "Measure",
             "name": "measure",
             "kind": "Measure"
+        },
+        {
+            "displayName": "Tooltips",
+            "name": "tooltips",
+            "kind": "Measure"
         }
     ],
     "objects": {
@@ -201,6 +206,11 @@
                         {
                             "bind": {
                                 "to": "measure"
+                            }
+                        },
+                        {
+                            "bind": {
+                                "to": "tooltips"
                             }
                         }
                     ]
