@@ -1,8 +1,13 @@
 {
     "dataRoles": [
         {
-            "displayName": "Fields",
+            "displayName": "Field",
             "name": "category",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Legend",
+            "name": "legend",
             "kind": "Grouping"
         },
         {
@@ -23,52 +28,52 @@
             "properties": {
                 "filter": {
                     "type": {
-                       "filter": {
-                          "filter": true
-                       }
+                        "filter": {
+                            "filter": true
+                        }
                     }
-                 }
+                }
             }
         },
         "barslicer": {
             "displayName": "BarSlicer",
             "properties": {
-                "slicerItems":{
+                "slicerItems": {
                     "displayName": "Items",
                     "description": "Items that has been selected",
                     "type": {
                         "text": true
                     }
                 },
-                "selectAllSelected":{
+                "selectAllSelected": {
                     "displayName": "Select all selected",
                     "description": "Items that has been selected",
                     "type": {
                         "bool": true
                     }
                 },
-                "tableName":{
+                "tableName": {
                     "displayName": "Table name",
                     "description": "Table name of the category column",
                     "type": {
                         "text": true
                     }
                 },
-                "columnName":{
+                "columnName": {
                     "displayName": "Column name",
                     "description": "Column name of the category column",
                     "type": {
                         "text": true
                     }
                 },
-                "excludeItemsBySearch":{
+                "excludeItemsBySearch": {
                     "displayName": "Exclude items by search",
                     "description": "Values that has been filtered by the search function",
                     "type": {
                         "text": true
                     }
                 },
-                "searchString":{
+                "searchString": {
                     "displayName": "Search string",
                     "description": "Current search text",
                     "type": {
@@ -80,21 +85,21 @@
         "selectionControls": {
             "displayName": "Selection controls",
             "properties": {
-                "singleSelect":{
+                "singleSelect": {
                     "displayName": "Single select",
                     "description": "Allow only one item being selected at a time.",
                     "type": {
                         "bool": true
                     }
                 },
-                "selectAll":{
+                "selectAll": {
                     "displayName": "Show \"Select All\" option",
                     "description": "Show \"Select All\" as an option in the slicer. This selects all the values in the slicer so you can unselect them one by one to create an \"is not \" type filter.",
                     "type": {
                         "bool": true
                     }
                 },
-                "searchBar":{
+                "searchBar": {
                     "displayName": "Show search bar",
                     "description": "Show search bar at the top of the slicer.",
                     "type": {
@@ -182,12 +187,15 @@
                 }
             }
         }
-     },
+    },
     "dataViewMappings": [
         {
             "conditions": [
                 {
                     "category": {
+                        "max": 1
+                    },
+                    "legend": {
                         "max": 1
                     },
                     "measure": {
@@ -202,18 +210,21 @@
                     }
                 },
                 "values": {
-                    "select": [
-                        {
-                            "bind": {
-                                "to": "measure"
+                    "group": {
+                        "by": "legend",
+                        "select": [
+                            {
+                                "bind": {
+                                    "to": "measure"
+                                }
+                            },
+                            {
+                                "bind": {
+                                    "to": "tooltips"
+                                }
                             }
-                        },
-                        {
-                            "bind": {
-                                "to": "tooltips"
-                            }
-                        }
-                    ]
+                        ]
+                    }
                 }
             }
         }
