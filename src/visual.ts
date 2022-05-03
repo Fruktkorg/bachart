@@ -77,6 +77,9 @@ export class Visual implements IVisual {
         this.persistColumnName(data[0][2])
         this.appendVisual(data);
         this.applySearchboxStyle();
+
+        //TEST!
+        var test = this.getDatasetWithLegend(options.dataViews[0]);
     }
 
     public getDataset(dataView: DataView): any {
@@ -96,7 +99,7 @@ export class Visual implements IVisual {
         var tooltipData = new Array();
         var tooltipDataPivot = new Array();
 
-        for(i=1;i<categoricalDataView.values.length;i++)
+        for(var i=1;i<categoricalDataView.values.length;i++)
         {
             // categoricalValuesTooltipList.push(categoricalDataView.values[i].values);
             // categoricalValuesTooltipNameList.push(categoricalDataView.values[i].source.displayName);
@@ -104,7 +107,12 @@ export class Visual implements IVisual {
 
             for (var j = 0; j < categoricalNames.length; j++) {
                 if (categoricalNames[j] != null) {
-                    tooltipData.push([j.toString(), categoricalDataView.values[i].values[j], categoricalDataView.values[i].source.displayName, categoricalDataView.values[i].source.format])
+                    if (categoricalDataView.values[i].source.groupName != null) {
+                        tooltipData.push([j.toString(), categoricalDataView.values[i].values[j], categoricalDataView.values[i].source.displayName+' - '+categoricalDataView.values[i].source.groupName, categoricalDataView.values[i].source.format])
+                    }
+                    else{
+                        tooltipData.push([j.toString(), categoricalDataView.values[i].values[j], categoricalDataView.values[i].source.displayName, categoricalDataView.values[i].source.format])
+                    }
                 }
             }
         }
@@ -115,7 +123,7 @@ export class Visual implements IVisual {
                 tooltipDataPivot.push( JSON.parse(JSON.stringify(tooltipData)).filter(id => id[0] == i.toString()) )
             }
         }
-        
+ 
         var tooltipDataPivotTransposed = tooltipDataPivot[0].map((_, colIndex) => tooltipDataPivot.map(row => row[colIndex]))
         var tooltipDataConcat = new Array();
 
@@ -152,7 +160,75 @@ export class Visual implements IVisual {
                 this.filterValuesWithDataTypes.push(categoricalNames[i]);
             }
         }
+
         return data
+    }
+
+    public getDatasetWithLegend(dataView: DataView): any {
+        var categoricalDataView = dataView.categorical;
+
+        var values = new Array();
+        var metadata = new Array();
+
+        for(var i=0;i<dataView.metadata.columns.length;i++)
+        {
+            metadata.push([dataView.metadata.columns[i].displayName,
+                dataView.metadata.columns[i].format,
+                Object.keys(dataView.metadata.columns[i].roles)[0]])
+        }
+
+        for(var i=0;i<categoricalDataView.values.length;i++)
+        {
+            for (var j = 0; j < categoricalDataView.categories[0].values.length; j++) {
+                if (categoricalDataView.categories[0].values[j] != null) {
+                    values.push([j.toString(),categoricalDataView.categories[0].values[j], categoricalDataView.values[i].source.displayName,Object.keys(categoricalDataView.values[i].source.roles)[0],categoricalDataView.values[i].source.format,categoricalDataView.values[i].source.groupName, categoricalDataView.values[i].values[j]])
+                }
+            }
+        }
+
+        var tooltipDataPivot = new Array();
+
+        for (var i = 0; i < categoricalDataView.categories[0].values.length; i++) {
+            if (categoricalDataView.categories[0].values[i] != null) {
+                tooltipDataPivot.push( JSON.parse(JSON.stringify(values)).filter(id => id[0] == i.toString()) )
+            }
+        }
+ 
+        var tooltipDataPivotTransposed = tooltipDataPivot[0].map((_, colIndex) => tooltipDataPivot.map(row => row[colIndex]))
+
+        if (categoricalDataView.categories[0].source.expr["ref"] === undefined) {
+            var categoricalNamesColummName = categoricalDataView.categories[0].source.expr["level"];
+            var categoricalNamesTableName = (<any>(<any>categoricalDataView.categories[0].source).identityExprs[(<any>categoricalDataView.categories[0].source).identityExprs.length - 1]).source.entity;
+        }
+        else {
+            var categoricalNamesColummName = categoricalDataView.categories[0].source.expr["ref"];
+            var categoricalNamesTableName = categoricalDataView.categories[0].source.expr["source"].entity;
+        }
+
+        var data = new Array();
+        this.filterValuesWithDataTypes = new Array();
+
+        for (var i = 0; i < categoricalDataView.categories[0].values.length; i++) {
+            if (categoricalDataView.categories[0].values[i] != null) {
+                data.push([i.toString(),categoricalNamesColummName.toString(), categoricalNamesTableName.toString(), categoricalDataView.categories[0].values[i].toString()])
+                
+                //Measures
+                for(var j = 0; j<tooltipDataPivotTransposed.length;j++)
+                {
+                    data[i].push(tooltipDataPivotTransposed[j][i][2])
+                    data[i].push(tooltipDataPivotTransposed[j][i][3])
+                    data[i].push(tooltipDataPivotTransposed[j][i][4])
+                    data[i].push(tooltipDataPivotTransposed[j][i][5])
+                    data[i].push(tooltipDataPivotTransposed[j][i][6])
+                }
+                this.filterValuesWithDataTypes.push(categoricalDataView.categories[0].values[i]);
+            }
+        }
+
+
+        console.log(data);
+
+        return []
     }
 
     public sortDataset(data: any): any {
